@@ -40,3 +40,5 @@ npm run preview
 保持手形 Logo、WeiBei Stele 字体及原标语 `experience a dream`。明色使用暖象牙白织物材质，暗色使用蓝黑石质与水面折射；整页保持相同视觉语言。品牌规范见 `BRAND.md`。
 
 源码迁移自原 WroughtMind Sites 站点。本仓库独立使用 GitHub Pages，无需 Sites 服务或服务器。WeiBeiStele.ttf 与产品截图来自对应 WroughtMind 项目；背景、横幅与海报基于原选定视觉方向生成。迁移时未改变页面布局与交互。
+
+首页背景使用同尺寸 WebP，当前主题背景提前加载。首次打开直接应用正确主题，手动明暗切换保留原有渐变。

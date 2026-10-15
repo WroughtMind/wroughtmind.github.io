@@ -7,6 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="/assets/wroughtmind-mark.svg"/>
 <link rel="preload" href="/assets/WeiBeiStele.ttf" as="font" type="font/ttf" crossorigin/>
 <script>try{var preference=localStorage.getItem('wroughtmind-appearance')||'system';document.documentElement.dataset.theme=preference==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):preference;}catch(_){document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}</script>
+<script>var themeImage=document.createElement('link');themeImage.rel='preload';themeImage.as='image';themeImage.href='/assets/dream-'+document.documentElement.dataset.theme+'.webp';themeImage.fetchPriority='high';document.head.appendChild(themeImage);</script>
 <meta property="og:url" content="https://wroughtmind.github.io"/>
 <link rel="canonical" href="https://wroughtmind.github.io/"/>
 <title>WroughtMind — experience a dream</title>

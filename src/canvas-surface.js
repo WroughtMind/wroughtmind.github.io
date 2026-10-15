@@ -5,7 +5,7 @@ export function startCanvasSurface(host, preferences, parent) {
  host.appendChild(canvas);host.dataset.engine='canvas';canvas.setAttribute('aria-hidden','true');
  let dead=false,frame=0,visible=true,w=0,h=0,time=0,last=0,drawn=false,mix=preferences.current.theme==='dark'?1:0,moving=preferences.current.motion?1:0;
  let x=.5,y=.5,tx=.5,ty=.5,rippleAge=100;
- const images=['/assets/dream-light.png','/assets/dream-dark.png'].map(src=>{const i=new Image();i.src=src;return i;});
+ const images=['/assets/dream-light.webp','/assets/dream-dark.webp'].map(src=>{const i=new Image();i.src=src;return i;});
  const source=[document.createElement('canvas'),document.createElement('canvas')];
  const pass=document.createElement('canvas'),passCtx=pass.getContext('2d',{alpha:false});
  const pad=28;

@@ -50,7 +50,7 @@ export default function DreamSurface({theme,motion}){
    renderer=new THREE.WebGLRenderer({canvas:glCanvas,context:gl,antialias:false,alpha:false,powerPreference:'low-power'});
    renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.outputColorSpace=THREE.LinearSRGBColorSpace;
    const loader=new THREE.TextureLoader();
-   textures=await Promise.all(['/assets/dream-light.png','/assets/dream-dark.png'].map(p=>loader.loadAsync(p)));
+   textures=await Promise.all(['/assets/dream-light.webp','/assets/dream-dark.webp'].map(p=>loader.loadAsync(p)));
    if(disposed){textures.forEach(t=>t.dispose());renderer.dispose();return;}
    textures.forEach(t=>{t.minFilter=THREE.LinearFilter;t.magFilter=THREE.LinearFilter;t.generateMipmaps=false;});
    const u={uLight:{value:textures[0]},uDark:{value:textures[1]},uResolution:{value:new THREE.Vector2(1440,900)},uTime:{value:0},uTheme:{value:mix},uPointer:{value:pointer},uRipple:{value:ripple},uRippleTime:{value:100},uMotion:{value:moving}};

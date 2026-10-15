@@ -8,6 +8,10 @@ function useAppearance(){
  const theme=preference==='system'?(systemDark?'dark':'light'):preference;
  useEffect(()=>{const mq=matchMedia('(prefers-color-scheme: dark)'),change=e=>setSystemDark(e.matches);mq.addEventListener('change',change);return()=>mq.removeEventListener('change',change);},[]);
  useEffect(()=>{document.documentElement.dataset.theme=theme;document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#101318':'#f2ede3';try{localStorage.setItem('wroughtmind-appearance',preference);}catch{}},[theme,preference]);
+ useEffect(()=>{
+  let frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{document.documentElement.dataset.appearanceReady='true';});});
+  return()=>cancelAnimationFrame(frame);
+ },[]);
  return {theme,setPreference};
 }
 function Mark(){return <span className="brand-mark" aria-hidden="true"><img src={asset('wroughtmind-mark.svg')} alt=""/></span>;}
@@ -37,10 +41,10 @@ export function App(){
  return <>
  <a className="skip-link" href="#work">Skip to work</a>
  <div className="site-scene">
- <div className="page-atmosphere" aria-hidden="true"><img src={asset('dream-light.png')} className={theme==='light'?'active':''} alt=""/><img src={asset('dream-dark.png')} className={theme==='dark'?'active':''} alt=""/></div>
+ <div className="page-atmosphere" aria-hidden="true"><img src={asset('dream-light.webp')} className={theme==='light'?'active':''} alt=""/><img src={asset('dream-dark.webp')} className={theme==='dark'?'active':''} alt=""/></div>
  <main>
   <section className="hero" id="top" aria-label="WroughtMind">
-   <div className="hero-backdrop" aria-hidden="true"><img className={'fallback-art '+(theme==='light'?'active':'')} src={asset('dream-light.png')} alt="" fetchPriority="high"/><img className={'fallback-art '+(theme==='dark'?'active':'')} src={asset('dream-dark.png')} alt="" fetchPriority="high"/><Suspense fallback={null}><DreamSurface theme={theme} motion={motion}/></Suspense></div>
+   <div className="hero-backdrop" aria-hidden="true"><img className={'fallback-art '+(theme==='light'?'active':'')} src={asset('dream-light.webp')} alt="" fetchPriority={theme==='light'?'high':'low'} decoding="async"/><img className={'fallback-art '+(theme==='dark'?'active':'')} src={asset('dream-dark.webp')} alt="" fetchPriority={theme==='dark'?'high':'low'} decoding="async"/><Suspense fallback={null}><DreamSurface theme={theme} motion={motion}/></Suspense></div>
    <header className="site-header"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><nav aria-label="Main navigation"><a className="github-link" href="https://github.com/WroughtMind" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={15}/></a><ThemeButton theme={theme} onClick={()=>setPreference(theme==='dark'?'light':'dark')}/></nav></header>
    <div className="hero-copy"><h1><span className="hero-prefix">experience a</span><span className="hero-dream">dream</span></h1><a className="underlined-link hero-cta" href="#work">Explore our work <ArrowDown size={20} weight="regular"/></a></div>
   </section>
