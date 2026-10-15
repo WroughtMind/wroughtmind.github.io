@@ -10,7 +10,7 @@ function useAppearance(){
  useEffect(()=>{document.documentElement.dataset.theme=theme;document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#101318':'#f2ede3';try{localStorage.setItem('wroughtmind-appearance',preference);}catch{}},[theme,preference]);
  return {theme,preference,setPreference};
 }
-function Mark(){return <span className="brand-mark" aria-hidden="true"><img src={asset('wroughtmind-mark.png')} alt=""/></span>;}
+function Mark(){return <span className="brand-mark" aria-hidden="true"><img src={asset('wroughtmind-mark.svg')} alt=""/></span>;}
 function Wordmark(){return <span className="wordmark">wroughtmind</span>;}
 function ThemeButton({theme,onClick}){return <button className="theme-button" onClick={onClick} aria-label={'Switch to '+(theme==='dark'?'light':'dark')+' mode'} title={'Switch to '+(theme==='dark'?'light':'dark')+' mode'}><Sun className={'theme-icon '+(theme==='light'?'shown':'')} size={19} weight="light"/><Moon className={'theme-icon '+(theme==='dark'?'shown':'')} size={19} weight="light"/></button>;}
 function useReveals(){useEffect(()=>{const els=document.querySelectorAll('[data-reveal]');if(matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(e=>e.classList.add('revealed'));return;}const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');observer.unobserve(e.target);}}),{threshold:.08});els.forEach(e=>observer.observe(e));return()=>observer.disconnect();},[]);}
