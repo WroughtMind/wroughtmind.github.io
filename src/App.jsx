@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, lazy, Suspense } from 'react';
-import { ArrowUpRight, ArrowDown, Sun, Moon, Desktop, ArrowUp, DownloadSimple } from '@phosphor-icons/react';
+import { useEffect, useState, lazy, Suspense } from 'react';
+import { ArrowUpRight, ArrowDown, Sun, Moon, Desktop, ArrowUp } from '@phosphor-icons/react';
 const DreamSurface=lazy(()=>import('./DreamSurface.jsx'));
 const asset=name=>'/assets/'+name;
 function useAppearance(){
@@ -31,11 +31,9 @@ const projects=[
 export function App(){
  const {theme,preference,setPreference}=useAppearance();
  const [motion,setMotion]=useState(()=>!matchMedia('(prefers-reduced-motion: reduce)').matches);
- const [assetsOpen,setAssetsOpen]=useState(false), dialogRef=useRef(null);
  useReveals();
  useAtmosphere(motion);
  useEffect(()=>{const mq=matchMedia('(prefers-reduced-motion: reduce)'),change=e=>setMotion(!e.matches);mq.addEventListener('change',change);return()=>mq.removeEventListener('change',change);},[]);
- useEffect(()=>{if(assetsOpen)dialogRef.current?.showModal();else dialogRef.current?.close();},[assetsOpen]);
  return <>
  <a className="skip-link" href="#work">Skip to work</a>
  <div className="site-scene">
@@ -57,8 +55,7 @@ export function App(){
   </section>
 
  </main>
- <footer className="site-footer"><div className="footer-top"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><a className="back-top" href="#top" aria-label="Back to top"><ArrowUp size={20}/></a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} WroughtMind</span><div className="footer-actions"><button onClick={()=>setAssetsOpen(true)}>Brand assets <DownloadSimple size={14}/></button><button className={preference==='system'?'system-active':''} onClick={()=>setPreference('system')} aria-pressed={preference==='system'}><Desktop size={15}/>{preference==='system'?'Following system':'Use device appearance'}</button></div></div></footer>
+ <footer className="site-footer"><div className="footer-top"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><a className="back-top" href="#top" aria-label="Back to top"><ArrowUp size={20}/></a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} WroughtMind</span><div className="footer-actions"><button className={preference==='system'?'system-active':''} onClick={()=>setPreference('system')} aria-pressed={preference==='system'}><Desktop size={15}/>{preference==='system'?'Following system':'Use device appearance'}</button></div></div></footer>
  </div>
- <dialog className="brand-dialog" ref={dialogRef} onCancel={()=>setAssetsOpen(false)} onClick={e=>{if(e.target===dialogRef.current)setAssetsOpen(false);}}><div className="brand-dialog-header"><h2>Brand assets</h2><button onClick={()=>setAssetsOpen(false)}>Close</button></div><div className="brand-downloads"><div className="brand-download"><div><span>Vector logo</span><a href={asset('wroughtmind-mark.svg')} download="wroughtmind-logo.svg">SVG <DownloadSimple size={15}/></a></div></div>{['light','dark'].map(mode=><div className="brand-download" key={mode}><img src={'/brand/wroughtmind-banner-'+mode+'.png'} alt={mode+' WroughtMind banner'}/><div><span>{mode==='light'?'Daylight':'After dark'}</span><a href={'/brand/wroughtmind-banner-'+mode+'.png'} download>Banner <DownloadSimple size={15}/></a><a href={'/brand/wroughtmind-poster-'+mode+'.png'} download>Poster <DownloadSimple size={15}/></a></div></div>)}</div></dialog>
  </>;
 }

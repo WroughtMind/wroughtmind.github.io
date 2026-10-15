@@ -2,7 +2,7 @@
 
 WroughtMind 组织官网：https://wroughtmind.github.io/
 
-保留原站点的明暗主题、动态材质、Weibei / Creditia 作品展示及品牌素材下载。字体、图片与品牌素材都在仓库内，无需外部图片或字体服务。
+保留原站点的明暗主题、动态材质、Weibei / Creditia 作品展示。字体、图片与品牌素材都在仓库内，无需外部图片或字体服务。
 
 ## 日常修改
 

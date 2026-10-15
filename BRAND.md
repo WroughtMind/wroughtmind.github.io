@@ -23,6 +23,6 @@ Slogan：**experience a dream**，保持全小写。
 | wroughtmind-poster-light.png | 1024 × 1536 |
 | wroughtmind-poster-dark.png | 1024 × 1536 |
 
-官网页脚的 Brand assets 入口可下载透明 SVG Logo，以及四张品牌图片。
+品牌素材保留在仓库中：透明 SVG Logo 位于 `public/assets/wroughtmind-mark.svg`，横幅与海报位于 `public/brand/`。官网不提供素材下载入口。
 
 Logo 矢量源文件：`public/assets/wroughtmind-mark.svg`。来自 2026-09-16 品牌使用包的 `01-独立图形.svg`，保留三条原始路径，只收紧画布留白。页头、页脚与 favicon 共用此文件，背景透明。深色主题仅对标志反色，不使用背景混合或裁切。
