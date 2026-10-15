@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
-import { ArrowUpRight, ArrowDown, Sun, Moon, Desktop, ArrowUp } from '@phosphor-icons/react';
+import { ArrowUpRight, ArrowDown, Sun, Moon, ArrowUp } from '@phosphor-icons/react';
 const DreamSurface=lazy(()=>import('./DreamSurface.jsx'));
 const asset=name=>'/assets/'+name;
 function useAppearance(){
@@ -8,11 +8,11 @@ function useAppearance(){
  const theme=preference==='system'?(systemDark?'dark':'light'):preference;
  useEffect(()=>{const mq=matchMedia('(prefers-color-scheme: dark)'),change=e=>setSystemDark(e.matches);mq.addEventListener('change',change);return()=>mq.removeEventListener('change',change);},[]);
  useEffect(()=>{document.documentElement.dataset.theme=theme;document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#101318':'#f2ede3';try{localStorage.setItem('wroughtmind-appearance',preference);}catch{}},[theme,preference]);
- return {theme,preference,setPreference};
+ return {theme,setPreference};
 }
 function Mark(){return <span className="brand-mark" aria-hidden="true"><img src={asset('wroughtmind-mark.svg')} alt=""/></span>;}
 function Wordmark(){return <span className="wordmark">wroughtmind</span>;}
-function ThemeButton({theme,onClick}){return <button className="theme-button" onClick={onClick} aria-label={'Switch to '+(theme==='dark'?'light':'dark')+' mode'} title={'Switch to '+(theme==='dark'?'light':'dark')+' mode'}><Sun className={'theme-icon '+(theme==='light'?'shown':'')} size={19} weight="light"/><Moon className={'theme-icon '+(theme==='dark'?'shown':'')} size={19} weight="light"/></button>;}
+function ThemeButton({theme,onClick}){return <button className="theme-button" onClick={onClick} aria-label={'Switch to '+(theme==='dark'?'light':'dark')+' mode'} title={'Switch to '+(theme==='dark'?'light':'dark')+' mode'}><Sun className={'theme-icon '+(theme==='light'?'shown':'')} size={20} weight="regular"/><Moon className={'theme-icon '+(theme==='dark'?'shown':'')} size={20} weight="regular"/></button>;}
 function useReveals(){useEffect(()=>{const els=document.querySelectorAll('[data-reveal]');if(matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(e=>e.classList.add('revealed'));return;}const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');observer.unobserve(e.target);}}),{threshold:.08});els.forEach(e=>observer.observe(e));return()=>observer.disconnect();},[]);}
 function useAtmosphere(motion){
  useEffect(()=>{
@@ -29,7 +29,7 @@ const projects=[
 {id:'creditia',name:'Creditia',description:'Credits for AI-assisted work.',href:'https://wroughtmind.github.io/creditia/',repo:'https://github.com/WroughtMind/creditia',image:'creditia-light.webp',darkImage:'creditia-dark.webp',alt:'Creditia’s actual gallery of project credits and visual exports.'}
 ];
 export function App(){
- const {theme,preference,setPreference}=useAppearance();
+ const {theme,setPreference}=useAppearance();
  const [motion,setMotion]=useState(()=>!matchMedia('(prefers-reduced-motion: reduce)').matches);
  useReveals();
  useAtmosphere(motion);
@@ -42,7 +42,7 @@ export function App(){
   <section className="hero" id="top" aria-label="WroughtMind">
    <div className="hero-backdrop" aria-hidden="true"><img className={'fallback-art '+(theme==='light'?'active':'')} src={asset('dream-light.png')} alt="" fetchPriority="high"/><img className={'fallback-art '+(theme==='dark'?'active':'')} src={asset('dream-dark.png')} alt="" fetchPriority="high"/><Suspense fallback={null}><DreamSurface theme={theme} motion={motion}/></Suspense></div>
    <header className="site-header"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><nav aria-label="Main navigation"><a href="#work">Work</a><a className="github-link" href="https://github.com/WroughtMind" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={15}/></a><ThemeButton theme={theme} onClick={()=>setPreference(theme==='dark'?'light':'dark')}/></nav></header>
-   <div className="hero-copy"><h1><span className="hero-prefix">experience a</span><span className="hero-dream">dream</span></h1><a className="underlined-link hero-cta" href="#work">Explore our work <ArrowDown size={19} weight="light"/></a></div>
+   <div className="hero-copy"><h1><span className="hero-prefix">experience a</span><span className="hero-dream">dream</span></h1><a className="underlined-link hero-cta" href="#work">Explore our work <ArrowDown size={20} weight="regular"/></a></div>
   </section>
   <section id="work" aria-labelledby="work-title">
   <div className="work-index" aria-label="Selected work index"><h2 id="work-title">Selected work</h2><i aria-hidden="true"/><a href="#weibei">Weibei <ArrowUpRight size={15}/></a><i aria-hidden="true"/><a href="#creditia">Creditia <ArrowUpRight size={15}/></a><i aria-hidden="true"/></div>
@@ -55,7 +55,7 @@ export function App(){
   </section>
 
  </main>
- <footer className="site-footer"><div className="footer-top"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><a className="back-top" href="#top" aria-label="Back to top"><ArrowUp size={20}/></a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} WroughtMind</span><div className="footer-actions"><button className={preference==='system'?'system-active':''} onClick={()=>setPreference('system')} aria-pressed={preference==='system'}><Desktop size={15}/>{preference==='system'?'Following system':'Use device appearance'}</button></div></div></footer>
+ <footer className="site-footer"><div className="footer-top"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><a className="back-top" href="#top" aria-label="Back to top"><ArrowUp size={20}/></a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} WroughtMind</span></div></footer>
  </div>
  </>;
 }
