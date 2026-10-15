@@ -41,11 +41,11 @@ export function App(){
  <main>
   <section className="hero" id="top" aria-label="WroughtMind">
    <div className="hero-backdrop" aria-hidden="true"><img className={'fallback-art '+(theme==='light'?'active':'')} src={asset('dream-light.png')} alt="" fetchPriority="high"/><img className={'fallback-art '+(theme==='dark'?'active':'')} src={asset('dream-dark.png')} alt="" fetchPriority="high"/><Suspense fallback={null}><DreamSurface theme={theme} motion={motion}/></Suspense></div>
-   <header className="site-header"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><nav aria-label="Main navigation"><a href="#work">Work</a><a className="github-link" href="https://github.com/WroughtMind" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={15}/></a><ThemeButton theme={theme} onClick={()=>setPreference(theme==='dark'?'light':'dark')}/></nav></header>
+   <header className="site-header"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><nav aria-label="Main navigation"><a className="github-link" href="https://github.com/WroughtMind" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={15}/></a><ThemeButton theme={theme} onClick={()=>setPreference(theme==='dark'?'light':'dark')}/></nav></header>
    <div className="hero-copy"><h1><span className="hero-prefix">experience a</span><span className="hero-dream">dream</span></h1><a className="underlined-link hero-cta" href="#work">Explore our work <ArrowDown size={20} weight="regular"/></a></div>
   </section>
   <section id="work" aria-labelledby="work-title">
-  <div className="work-index" aria-label="Selected work index"><h2 id="work-title">Selected work</h2><i aria-hidden="true"/><a href="#weibei">Weibei <ArrowUpRight size={15}/></a><i aria-hidden="true"/><a href="#creditia">Creditia <ArrowUpRight size={15}/></a><i aria-hidden="true"/></div>
+  <div className="work-heading"><h2 id="work-title">Selected work</h2></div>
   <div className="work-section">
    {projects.map(p=><article id={p.id} className="project" key={p.id}>
     <div className="project-information" data-reveal><h3>{p.name}</h3><p className="project-description">{p.description}</p><div className="project-links"><a className="underlined-link" href={p.href} target="_blank" rel="noopener noreferrer">Visit website <ArrowUpRight size={18}/></a><a className="quiet-link" href={p.repo} target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={13}/></a></div></div>
@@ -55,7 +55,7 @@ export function App(){
   </section>
 
  </main>
- <footer className="site-footer"><div className="footer-top"><a className="brand-lockup" href="#top" aria-label="WroughtMind home"><Mark/><Wordmark/></a><a className="back-top" href="#top" aria-label="Back to top"><ArrowUp size={20}/></a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} WroughtMind</span></div></footer>
+ <footer className="site-footer"><span>© {new Date().getFullYear()} WroughtMind</span><a className="back-top" href="#top" aria-label="Back to top"><ArrowUp size={20}/></a></footer>
  </div>
  </>;
 }
