@@ -1,0 +1,7 @@
+node_modules/
+dist/
+qa-evidence/
+.env
+.env.*
+!.env.example
+.DS_Store
