@@ -6,7 +6,7 @@ Slogan：**experience a dream**，保持全小写。
 | --- | --- | --- |
 | 主背景 | `#F2EDE3` | `#101318` |
 | 主文字 | `#191917` | `#F1EDE4` |
-| 次级文字 | `#777269` | `#A6A8AA` |
+| 次级文字 | `#6b665e`（对比度 ≥ 4.5:1） | `#A6A8AA` |
 | 作品区 | 延续主背景的织物纹理 | 延续主背景的石面纹理 |
 | 分隔线 | `#C6BFB2` | `#3A414B` |
 
@@ -22,6 +22,7 @@ Slogan：**experience a dream**，保持全小写。
 | wroughtmind-banner-dark.png | 2146 × 733 |
 | wroughtmind-poster-light.png | 1024 × 1536 |
 | wroughtmind-poster-dark.png | 1024 × 1536 |
+| wroughtmind-og-card.jpg | 1200 × 630（搜索与聊天分享卡片专用，由暗色横幅安全区域裁切） |
 
 品牌素材保留在仓库中：透明 SVG Logo 位于 `public/assets/wroughtmind-mark.svg`，横幅与海报位于 `public/brand/`。官网不提供素材下载入口。
 

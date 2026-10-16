@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wroughtmind.github.io/sitemap.xml

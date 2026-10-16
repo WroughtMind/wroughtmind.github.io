@@ -14,6 +14,9 @@ WroughtMind 组织官网：https://wroughtmind.github.io/
 | Logo、字体、背景和作品截图 | `public/assets/` |
 | 可下载的横幅和海报 | `public/brand/` |
 | 网页标题、搜索摘要和分享信息 | `index.html` |
+| 404 页面文案与样式 | `public/404.html` |
+| 搜索与聊天分享卡片图 | `public/brand/wroughtmind-og-card.jpg` |
+| 爬虫规则与站点地图 | `public/robots.txt`、`public/sitemap.xml` |
 
 小改动可以直接在 GitHub 打开对应文件，点击编辑按钮修改并提交到 `main`。每次提交都会自动构建并发布，进度见仓库 **Actions → Publish website**。发布成功后刷新官网即可看到更新。无需手工上传构建文件。
 
