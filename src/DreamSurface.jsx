@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
 import { startCanvasSurface } from './canvas-surface.js';
-const vertex = 'varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position,1.0);}';
-const fragment = `
+const vertex='attribute vec3 position;attribute vec2 uv;varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,1.0);}';
+const fragment=`
 precision highp float;
 uniform sampler2D uLight; uniform sampler2D uDark;
 uniform vec2 uResolution; uniform vec2 uPointer; uniform vec2 uRipple;
@@ -36,29 +35,55 @@ export default function DreamSurface({theme,motion}){
  const hostRef=useRef(null), preferences=useRef({theme,motion}); preferences.current={theme,motion};
  useEffect(()=>{
   const host=hostRef.current, parent=host.closest('.hero');
-  let disposed=false,frame=0,renderer,geometry,material,textures=[],ro,io,visible=true,last=0,time=0,rippleAt=-100,fallbackCleanup;
+  let disposed=false,frame=0,gl=null,program=null,buffers=[],textures=[],ro,io,visible=true,last=0,time=0,rippleAt=-100,fallbackCleanup;
   let mix=preferences.current.theme==='dark'?1:0, moving=preferences.current.motion?1:0;
-  const target=new THREE.Vector2(.5,.5),pointer=new THREE.Vector2(.5,.5),ripple=new THREE.Vector2(.5,.5);
-  const move=e=>{const r=parent.getBoundingClientRect();target.set((e.clientX-r.left)/r.width,1-(e.clientY-r.top)/r.height);};
-  const touch=e=>{move(e);ripple.copy(target);rippleAt=time;};
-  const leave=()=>target.set(.5,.5);
+  let px=.5,py=.5,tx=.5,ty=.5,rx=.5,ry=.5;
+  const move=e=>{const r=parent.getBoundingClientRect();tx=(e.clientX-r.left)/r.width;ty=1-(e.clientY-r.top)/r.height;};
+  const touch=e=>{move(e);rx=tx;ry=ty;rippleAt=time;};
+  const leave=()=>{tx=.5;ty=.5;};
+  const damp=(from,to,lambda,dt)=>from+(to-from)*(1-Math.exp(-lambda*dt));
+  const free=()=>{if(!gl)return;textures.forEach(t=>gl.deleteTexture(t));buffers.forEach(b=>gl.deleteBuffer(b));if(program)gl.deleteProgram(program);textures=[];buffers=[];program=null;gl=null;};
   async function start(){try{
    const glCanvas=document.createElement('canvas');
-   const gl=glCanvas.getContext('webgl2',{alpha:false,antialias:false,powerPreference:'low-power'});
+   gl=glCanvas.getContext('webgl2',{alpha:false,antialias:false,powerPreference:'low-power'});
    if(!gl){fallbackCleanup=startCanvasSurface(host,preferences,parent);return;}
    host.dataset.engine='webgl';
-   renderer=new THREE.WebGLRenderer({canvas:glCanvas,context:gl,antialias:false,alpha:false,powerPreference:'low-power'});
-   renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.outputColorSpace=THREE.LinearSRGBColorSpace;
-   const loader=new THREE.TextureLoader();
-   textures=await Promise.all(['/assets/dream-light.webp','/assets/dream-dark.webp'].map(p=>loader.loadAsync(p)));
-   if(disposed){textures.forEach(t=>t.dispose());renderer.dispose();return;}
-   textures.forEach(t=>{t.minFilter=THREE.LinearFilter;t.magFilter=THREE.LinearFilter;t.generateMipmaps=false;});
-   const u={uLight:{value:textures[0]},uDark:{value:textures[1]},uResolution:{value:new THREE.Vector2(1440,900)},uTime:{value:0},uTheme:{value:mix},uPointer:{value:pointer},uRipple:{value:ripple},uRippleTime:{value:100},uMotion:{value:moving}};
-   material=new THREE.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment,uniforms:u,depthTest:false,depthWrite:false});
-   geometry=new THREE.PlaneGeometry(2,2);const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);scene.add(new THREE.Mesh(geometry,material));
-   renderer.domElement.setAttribute('aria-hidden','true');host.appendChild(renderer.domElement);
-   const resize=()=>{const r=host.getBoundingClientRect();renderer.setSize(r.width,r.height);u.uResolution.value.set(r.width,r.height);};
-   ro=new ResizeObserver(resize);ro.observe(host);resize();io=new IntersectionObserver(es=>{visible=es[0].isIntersecting;},{rootMargin:'120px'});io.observe(host);
+   const compile=(type,source)=>{const shader=gl.createShader(type);gl.shaderSource(shader,source);gl.compileShader(shader);if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(shader)||'shader');return shader;};
+   program=gl.createProgram();
+   gl.attachShader(program,compile(gl.VERTEX_SHADER,vertex));
+   gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fragment));
+   gl.linkProgram(program);
+   if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program)||'link');
+   gl.useProgram(program);
+   const uniform={};for(const name of ['uLight','uDark','uResolution','uPointer','uRipple','uTime','uTheme','uRippleTime','uMotion'])uniform[name]=gl.getUniformLocation(program,name);
+   // One fullscreen strip; vUv grows upward like the previous PlaneGeometry setup.
+   const quad=gl.createBuffer();buffers.push(quad);gl.bindBuffer(gl.ARRAY_BUFFER,quad);
+   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,0,0,0, 1,-1,0,1,0, -1,1,0,0,1, 1,1,0,1,1]),gl.STATIC_DRAW);
+   const aPosition=gl.getAttribLocation(program,'position'),aUv=gl.getAttribLocation(program,'uv');
+   gl.enableVertexAttribArray(aPosition);gl.vertexAttribPointer(aPosition,3,gl.FLOAT,false,20,0);
+   gl.enableVertexAttribArray(aUv);gl.vertexAttribPointer(aUv,2,gl.FLOAT,false,20,12);
+   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+   const loadImage=src=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error(src));img.src=src;});
+   const images=await Promise.all(['/assets/dream-light.webp','/assets/dream-dark.webp'].map(loadImage));
+   if(disposed)return;
+   images.forEach((img,i)=>{
+    const texture=gl.createTexture();textures.push(texture);
+    gl.activeTexture(i?gl.TEXTURE1:gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D,texture);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.uniform1i(uniform[i?'uDark':'uLight'],i);
+   });
+   gl.uniform2f(uniform.uResolution,1440,900);
+   gl.uniform1f(uniform.uTheme,mix);gl.uniform1f(uniform.uMotion,moving);gl.uniform1f(uniform.uRippleTime,100);
+   gl.uniform2f(uniform.uPointer,px,py);gl.uniform2f(uniform.uRipple,rx,ry);
+   glCanvas.setAttribute('aria-hidden','true');host.appendChild(glCanvas);
+   const resize=()=>{const r=host.getBoundingClientRect(),pr=Math.min(devicePixelRatio,1.65);glCanvas.width=Math.max(1,Math.floor(r.width*pr));glCanvas.height=Math.max(1,Math.floor(r.height*pr));gl.viewport(0,0,glCanvas.width,glCanvas.height);gl.uniform2f(uniform.uResolution,r.width,r.height);};
+   ro=new ResizeObserver(resize);ro.observe(host);resize();
+   io=new IntersectionObserver(es=>{visible=es[0].isIntersecting;},{rootMargin:'120px'});io.observe(host);
    parent.addEventListener('pointermove',move,{passive:true});parent.addEventListener('pointerdown',touch,{passive:true});parent.addEventListener('pointerleave',leave,{passive:true});
    let rendered=false;
    function render(now){
@@ -67,13 +92,15 @@ export default function DreamSurface({theme,motion}){
     const next=preferences.current.theme==='dark'?1:0, movingTo=preferences.current.motion?1:0;
     const changing=Math.abs(mix-next)>.0001||Math.abs(moving-movingTo)>.0001;
     if(!movingTo&&!changing&&rendered)return;
-    time+=dt*moving;mix=THREE.MathUtils.damp(mix,next,3.6,elapsed);moving=THREE.MathUtils.damp(moving,movingTo,3.6,elapsed);pointer.lerp(target,1-Math.exp(-3*dt));
-    u.uTime.value=time;u.uTheme.value=mix;u.uMotion.value=moving;u.uRippleTime.value=time-rippleAt;
-    renderer.render(scene,camera);rendered=true;host.classList.add('ready');
+    time+=dt*moving;mix=damp(mix,next,3.6,elapsed);moving=damp(moving,movingTo,3.6,elapsed);
+    const k=1-Math.exp(-3*dt);px+=(tx-px)*k;py+=(ty-py)*k;
+    gl.uniform1f(uniform.uTime,time);gl.uniform1f(uniform.uTheme,mix);gl.uniform1f(uniform.uMotion,moving);gl.uniform1f(uniform.uRippleTime,time-rippleAt);
+    gl.uniform2f(uniform.uPointer,px,py);gl.uniform2f(uniform.uRipple,rx,ry);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);rendered=true;host.classList.add('ready');
    }frame=requestAnimationFrame(render);
-  }catch(error){renderer?.dispose();if(!disposed)fallbackCleanup=startCanvasSurface(host,preferences,parent);}}
+  }catch(error){free();if(!disposed)fallbackCleanup=startCanvasSurface(host,preferences,parent);}}
   start();
-  return()=>{disposed=true;fallbackCleanup?.();cancelAnimationFrame(frame);ro?.disconnect();io?.disconnect();parent.removeEventListener('pointermove',move);parent.removeEventListener('pointerdown',touch);parent.removeEventListener('pointerleave',leave);geometry?.dispose();material?.dispose();textures.forEach(t=>t.dispose());renderer?.dispose();host.replaceChildren();};
+  return()=>{disposed=true;fallbackCleanup?.();cancelAnimationFrame(frame);ro?.disconnect();io?.disconnect();parent.removeEventListener('pointermove',move);parent.removeEventListener('pointerdown',touch);parent.removeEventListener('pointerleave',leave);const context=gl;free();context?.getExtension('WEBGL_lose_context')?.loseContext();host.replaceChildren();};
  },[]);
  return <div ref={hostRef} className="dream-canvas"/>;
 }
