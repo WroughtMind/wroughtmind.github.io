@@ -17,7 +17,13 @@ function useAppearance(){
 function Mark(){return <span className="brand-mark" aria-hidden="true"><img src={asset('wroughtmind-mark.svg')} alt=""/></span>;}
 function Wordmark(){return <span className="wordmark">wroughtmind</span>;}
 function ThemeButton({theme,onClick}){return <button className="theme-button" onClick={onClick} aria-label={'Switch to '+(theme==='dark'?'light':'dark')+' mode'} title={'Switch to '+(theme==='dark'?'light':'dark')+' mode'}><Sun className={'theme-icon '+(theme==='light'?'shown':'')} size={20} weight="regular"/><Moon className={'theme-icon '+(theme==='dark'?'shown':'')} size={20} weight="regular"/></button>;}
-function useReveals(){useEffect(()=>{const els=document.querySelectorAll('[data-reveal]');if(matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(e=>e.classList.add('revealed'));return;}const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');observer.unobserve(e.target);}}),{threshold:.08});els.forEach(e=>observer.observe(e));return()=>observer.disconnect();},[]);}
+function useReveals(motion){useEffect(()=>{
+ const els=[...document.querySelectorAll('[data-reveal]')].filter(e=>!e.classList.contains('revealed'));
+ if(!motion){els.forEach(e=>e.classList.add('revealed'));return;}
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('revealed');observer.unobserve(entry.target);}}),{threshold:.08});
+ els.forEach(e=>{e.classList.add('reveal-pending');observer.observe(e);});
+ return()=>{observer.disconnect();els.forEach(e=>e.classList.remove('reveal-pending'));};
+},[motion]);}
 function useAtmosphere(motion){
  useEffect(()=>{
   const scene=document.querySelector('.page-atmosphere');if(!scene)return;
@@ -35,7 +41,7 @@ const projects=[
 export function App(){
  const {theme,setPreference}=useAppearance();
  const [motion,setMotion]=useState(()=>!matchMedia('(prefers-reduced-motion: reduce)').matches);
- useReveals();
+ useReveals(motion);
  useAtmosphere(motion);
  useEffect(()=>{const mq=matchMedia('(prefers-reduced-motion: reduce)'),change=e=>setMotion(!e.matches);mq.addEventListener('change',change);return()=>mq.removeEventListener('change',change);},[]);
  return <>
@@ -49,7 +55,7 @@ export function App(){
    <div className="hero-copy"><h1><span className="hero-prefix">experience a</span><span className="hero-dream">dream</span></h1><a className="underlined-link hero-cta" href="#work">Explore our work <ArrowDown size={20} weight="regular"/></a></div>
   </section>
   <section id="work" aria-labelledby="work-title">
-  <div className="work-heading"><h2 id="work-title">Selected work</h2></div>
+  <div className="work-heading" data-reveal><h2 id="work-title">Selected work</h2></div>
   <div className="work-section">
    {projects.map(p=><article id={p.id} className="project" key={p.id}>
     <div className="project-information" data-reveal><h3>{p.name}</h3><p className="project-description">{p.description}</p><div className="project-links"><a className="underlined-link" href={p.href} target="_blank" rel="noopener noreferrer">Visit website <ArrowUpRight size={18}/></a><a className="quiet-link" href={p.repo} target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={13}/></a></div></div>
