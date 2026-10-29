@@ -196,6 +196,16 @@ export function App() {
   }
   return <>
     <a className="skip-link" href="#work">Skip to projects</a>
+    <svg className="flag-geometry" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id="flag-edge" clipPathUnits="objectBoundingBox">
+          <path d="M .032 .012 C .26 -.005 .62 .02 .963 .006 Q .995 .004 .995 .057 C .996 .35 .99 .7 .981 .94 Q .979 .989 .945 .99 C .67 .978 .32 1 .04 .982 Q .006 .98 .008 .932 C .013 .65 .004 .3 .007 .062 Q .009 .016 .032 .012 Z"/>
+        </clipPath>
+        <clipPath id="flag-edge-portrait" clipPathUnits="objectBoundingBox">
+          <path d="M .075 .008 C .32 .002 .66 .018 .925 .008 Q .985 .006 .986 .05 C .996 .34 .977 .66 .982 .946 Q .983 .989 .925 .99 C .64 .982 .32 .996 .075 .982 Q .014 .98 .014 .941 C .02 .65 .004 .32 .012 .05 Q .013 .01 .075 .008 Z"/>
+        </clipPath>
+      </defs>
+    </svg>
     <div className="site-scene">
       <header className="site-header">
         <a className="brand-lockup" href="#top" aria-label="WroughtMind home"><img className="brand-mark" src={asset('wroughtmind-mark.svg')} alt=""/><span className="wordmark">wroughtmind</span></a>
