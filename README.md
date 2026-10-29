@@ -2,14 +2,15 @@
 
 WroughtMind 组织官网：https://wroughtmind.github.io/
 
-旗面上的两枚项目印记打开同一个液态玻璃详情窗。魏碑展示 Webi 与小朱的真实动画及工作台；Creditia 展示仓库中的四种真实导出样张。保留原始手形标志、WeiBei Stele 字体、明暗主题与动态材质。向下滚动时，同一块旗面舒展、虚化为底层背景，承接母品牌理念。
+旗面上的两枚项目印记打开同一个液态玻璃详情窗。魏碑展示 Webi 与小朱的真实动画及工作台；Creditia 展示仓库中的四种真实导出样张。保留原始手形标志、WeiBei Stele 字体、明暗主题与动态材质。标语保持两行居中。向下滚动时，同一块旗面舒展、虚化为底层背景，承接 Philosophy 与独立的 Contact 区域。
 
 ## 修改入口
 
 | 内容 | 文件 |
 | --- | --- |
 | 旗面入口、项目理念、弹窗与浏览器历史 | `src/App.jsx` |
-| 母品牌理念、上下文项目入口 | `src/BrandStory.jsx` |
+| Philosophy 正文、Contact 联系方式 | `src/BrandStory.jsx` |
+| 长文行长、栏目留白与响应式排版 | `src/brand-story.css` |
 | 滚动展开、阅读段落显现 | `src/useFlagUnfold.js` |
 | 旗面构图、玻璃材质、手机布局 | `src/styles.css` |
 | Webi 动画与 Creditia 样张互动 | `src/ProjectExhibits.jsx`、`src/project-exhibits.css` |
@@ -17,6 +18,8 @@ WroughtMind 组织官网：https://wroughtmind.github.io/
 | 主分支统计快照 | `src/project-stats.json` |
 | 统计更新 | `scripts/update-project-stats.mjs` |
 | 新素材来源 | `public/assets/projects/SOURCES.md` |
+
+Philosophy 与 Contact 当前仅显示栏目标题，正文和联系方式由品牌方后续提供。将理念段落填入 `src/BrandStory.jsx` 的 `.brand-philosophy-body`，将真实联系方式填入 `.brand-contact-body`；正文可以包含多个自然段，容器随内容增长，不限制为短句或固定高度。不要添加示例文案、占位提示、骨架线或代写的理念，也不在这两个区域重复项目入口。
 
 ## 预览与验证
 

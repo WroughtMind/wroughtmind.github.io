@@ -101,9 +101,9 @@ function ProjectSheet({ selected, motion, origin, returnContext, onSelect, onClo
         const dx = rect ? rect.left + rect.width / 2 - (box.left + box.width / 2) : 0;
         const dy = rect ? rect.top + rect.height / 2 - (box.top + box.height / 2) : 30;
         animationRef.current = dialog.animate([
-          { opacity: 0, transform: `translate(${dx * .3}px, ${dy * .3}px) scale(.86)`, filter: 'blur(8px)' },
-          { opacity: 1, transform: 'translate(0, 0) scale(1)', filter: 'blur(0px)' },
-        ], { duration: motionRef.current ? 620 : 0, easing: 'cubic-bezier(.16,1,.3,1)' });
+          { opacity: 0, transform: `translate(${dx * .14}px, ${dy * .14}px) scale(.965)` },
+          { opacity: 1, transform: 'translate(0, 0) scale(1)' },
+        ], { duration: motionRef.current ? 440 : 0, easing: 'cubic-bezier(.16,1,.3,1)' });
       }
       if (bodyRef.current) bodyRef.current.scrollTop = 0;
     } else if (dialog.open) {
@@ -111,8 +111,8 @@ function ProjectSheet({ selected, motion, origin, returnContext, onSelect, onClo
       animationRef.current?.cancel();
       const animation = dialog.animate([
         { opacity: 1, transform: 'scale(1)' },
-        { opacity: 0, transform: 'translateY(14px) scale(.96)' },
-      ], { duration: motionRef.current ? 220 : 0, easing: 'cubic-bezier(.4,0,1,1)' });
+        { opacity: 0, transform: 'translateY(8px) scale(.985)' },
+      ], { duration: motionRef.current ? 180 : 0, easing: 'cubic-bezier(.4,0,1,1)' });
       animationRef.current = animation;
       animation.finished.then(() => {
         if (!closingRef.current) return;
@@ -250,7 +250,7 @@ export function App() {
           <a className="scroll-cue icon-button" href="#approach" aria-label="Our approach"><ArrowDown size={19} weight="light"/></a>
         </section>
         </div>
-        <BrandStory onSelect={selectProject}/>
+        <BrandStory/>
         <footer className="site-footer"><span>© {new Date().getFullYear()} WroughtMind</span><a className="back-top icon-button" href="#top" aria-label="Back to top"><ArrowUp size={18}/></a></footer>
       </main>
     </div>
