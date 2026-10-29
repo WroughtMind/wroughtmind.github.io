@@ -1,0 +1,19 @@
+{
+  "updatedAt": "2026-10-29T17:24:05.315Z",
+  "projects": {
+    "weibei": {
+      "branch": "main",
+      "revision": "5588442ee29e733091b579c4a870fc316838b679",
+      "commits": 2296,
+      "firstCommit": "4fcc0b9a8fddb711509d9498a04d9180004253d0",
+      "firstCommitAt": "2026-07-03T08:52:14Z"
+    },
+    "creditia": {
+      "branch": "main",
+      "revision": "459cfc34bd07bd53efc3d78dc360bfc081e75cce",
+      "commits": 268,
+      "firstCommit": "e5e95a1999f4abe17d7a4869be3dcb5fbeb2f285",
+      "firstCommitAt": "2026-10-09T16:17:32Z"
+    }
+  }
+}

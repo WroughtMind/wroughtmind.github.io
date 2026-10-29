@@ -1,0 +1,12 @@
+.brand-story{position:relative;z-index:1;width:min(100%,1250px);margin:0 auto;padding:14vh 7vw 12vh;display:grid;gap:10vh}
+.brand-story section{min-width:0}
+.brand-story h2{margin:0 0 30px;font-size:14px;font-weight:400;line-height:1.5;letter-spacing:.03em}
+.brand-philosophy-body,.brand-contact-body{width:100%;max-width:62ch;font-size:18px;line-height:1.8;overflow-wrap:anywhere}
+.brand-philosophy-body{min-height:18rem}
+.brand-contact-body{min-height:10rem}
+.brand-story p{margin:0}
+.brand-story p+p{margin-top:1.5em}
+.brand-story a{cursor:pointer;text-decoration:underline;text-underline-offset:.22em;transition:opacity .2s}
+.brand-story a:hover{opacity:.65}
+.brand-story a:active{opacity:.45}
+@media(max-width:700px){.brand-story{padding:12vh 28px 10vh;gap:8vh}.brand-story h2{margin-bottom:24px}.brand-philosophy-body,.brand-contact-body{font-size:16px;line-height:1.8}.brand-philosophy-body{min-height:15rem}.brand-contact-body{min-height:8rem}}
