@@ -93,7 +93,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
       if (!origin.current) origin.current = document.querySelector(`[data-project="${selected}"]`);
       if (!dialog.open) {
         dialog.showModal();
-        dialog.querySelector('.close-sheet').focus({ preventScroll: true });
+        dialog.focus({ preventScroll: true });
         const rect = origin.current?.getBoundingClientRect();
         const box = dialog.getBoundingClientRect();
         const dx = rect ? rect.left + rect.width / 2 - (box.left + box.width / 2) : 0;
@@ -132,7 +132,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
   }, []);
 
   const backdropPointer = useRef(false);
-  return <dialog ref={dialogRef} className="project-sheet" aria-labelledby="project-title"
+  return <dialog ref={dialogRef} className="project-sheet" tabIndex={-1} aria-labelledby="project-title"
     onCancel={event => { event.preventDefault(); onClose(); }}
     onPointerDown={event => { backdropPointer.current = event.target === event.currentTarget; }}
     onClick={event => { if (event.target === event.currentTarget && backdropPointer.current) onClose(); }}>
@@ -142,7 +142,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
           {projects.map(p => <button key={p.id} className="project-switch" aria-pressed={project?.id === p.id}
             onClick={() => onSelect(p.id)}><ProjectMark project={p}/><span>{p.name}</span></button>)}
         </nav>
-        <button className="icon-button close-sheet" onClick={onClose} aria-label="Close project" autoFocus><X size={22} weight="light"/></button>
+        <button className="icon-button close-sheet" onClick={onClose} aria-label="Close project"><X size={22} weight="light"/></button>
       </header>
       {project && <>
         <div className="sheet-body" ref={bodyRef}>
