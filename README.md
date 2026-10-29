@@ -2,46 +2,47 @@
 
 WroughtMind 组织官网：https://wroughtmind.github.io/
 
-保留原站点的明暗主题、动态材质、Weibei / Creditia 作品展示。字体、图片与品牌素材都在仓库内，无需外部图片或字体服务。
+旗面上的两枚项目印记打开同一个液态玻璃详情窗。魏碑展示 Webi 与小朱的真实动画及工作台；Creditia 展示仓库中的四种真实导出样张。保留原始手形标志、WeiBei Stele 字体、明暗主题与动态材质。
 
-## 日常修改
+## 修改入口
 
-| 想改什么 | 文件 |
+| 内容 | 文件 |
 | --- | --- |
-| 标语、导航、作品简介与链接 | `src/App.jsx` |
-| 字体、颜色、间距与手机布局 | `src/styles.css` |
-| 首页动态材质 | `src/DreamSurface.jsx`、`src/canvas-surface.js` |
-| Logo、字体、背景和作品截图 | `public/assets/` |
-| 可下载的横幅和海报 | `public/brand/` |
-| 网页标题、搜索摘要和分享信息 | `index.html` |
-| 404 页面文案与样式 | `public/404.html` |
-| 搜索与聊天分享卡片图 | `public/brand/wroughtmind-og-card.jpg` |
-| 爬虫规则与站点地图 | `public/robots.txt`、`public/sitemap.xml` |
+| 旗面入口、项目理念、弹窗与浏览器历史 | `src/App.jsx` |
+| 旗面构图、玻璃材质、手机布局 | `src/styles.css` |
+| Webi 动画与 Creditia 样张互动 | `src/ProjectExhibits.jsx`、`src/project-exhibits.css` |
+| 织物光影与折射 | `src/DreamSurface.jsx`、`src/canvas-surface.js`、`src/surface-motion.js` |
+| 主分支统计快照 | `src/project-stats.json` |
+| 统计更新 | `scripts/update-project-stats.mjs` |
+| 新素材来源 | `public/assets/projects/SOURCES.md` |
 
-小改动可以直接在 GitHub 打开对应文件，点击编辑按钮修改并提交到 `main`。每次提交都会自动构建并发布，进度见仓库 **Actions → Publish website**。发布成功后刷新官网即可看到更新。无需手工上传构建文件。
-
-## 本地预览
+## 预览与验证
 
 使用 Node.js 22.12+：
 
 ```sh
 npm ci
 npm run dev
-```
-
-发布前可检查生产版本：
-
-```sh
 npm run build
 npm run preview
 ```
 
-生产文件生成到 `dist/`，不会提交到仓库。Pages 的发布源为 GitHub Actions，配置位于 `.github/workflows/pages.yml`。
+`#weibei`、`#creditia` 可以直接分享。点击项目时保留浏览历史，弹窗内切换项目不会新增层级；关闭、Esc 或后退返回旗面，前进恢复详情。弹窗正文独立滚动，关闭和官网入口始终可见。
 
-## 设计与来源
+设备启用“减少动态效果”时，织物停止持续绘制、Webi 改用静态图，详情和作品切换不播放过渡。页面不可见时停止背景绘制。
 
-保持手形 Logo、WeiBei Stele 字体及原标语 `experience a dream`。明色使用暖象牙白织物材质，暗色使用蓝黑石质与水面折射；整页保持相同视觉语言。品牌规范见 `BRAND.md`。
+## 数据口径
 
-源码迁移自原 WroughtMind Sites 站点。本仓库独立使用 GitHub Pages，无需 Sites 服务或服务器。WeiBeiStele.ttf 与产品截图来自对应 WroughtMind 项目；背景、横幅与海报基于原选定视觉方向生成。迁移时未改变页面布局与交互。
+```sh
+npm run stats
+```
 
-首页背景使用同尺寸 WebP，当前主题背景提前加载。首次打开直接应用正确主题，手动明暗切换保留原有渐变。
+脚本从 GitHub 默认分支读取不可变提交 revision，在同一 revision 下统计可达提交数，并取历史末页的首个提交。页面展示 **First commit**，不把建仓日期或提交日期冒充未经证实的立项时间。日期按 Asia/Shanghai 显示，快照时间在数据下方标注；GitHub 请求失败会终止更新，不写入假数。
+
+GitHub Pages 工作流在每次发布构建前刷新快照。生产文件只包含公开统计，不包含令牌或客户端 GitHub 请求。Creditia 样张中的数字属于原始样张，不代表当前主分支统计。
+
+## 发布
+
+`.github/workflows/pages.yml` 在 `main` 更新时构建并发布 GitHub Pages。功能分支本身不会发布。生产构建生成 `dist/`，不提交构建文件。构建通过、自动发布成功、浏览器实测是不同的验证结果。
+
+品牌素材保留在 `public/brand/`，官网不提供素材下载入口。完整品牌约束见 `BRAND.md`。

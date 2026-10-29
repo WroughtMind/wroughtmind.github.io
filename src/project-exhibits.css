@@ -1,0 +1,43 @@
+.webi-exhibit{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center;gap:5%;padding:8px 0 10px}
+.webi-exhibit-copy{max-width:310px}
+.webi-exhibit-copy h3{font-size:clamp(26px,3vw,32px);font-weight:400;letter-spacing:-1.2px;line-height:1.15;margin:0 0 22px}
+.webi-exhibit-copy p{font-size:15px;line-height:1.65;margin:0 0 14px;color:var(--muted)}
+.webi-exhibit-copy p:first-of-type{color:var(--ink);font-size:18px;line-height:1.5}
+.exhibit-link{display:inline-flex;align-items:center;gap:20px;min-height:44px;font-size:14px;cursor:pointer;transition:opacity 180ms, border-color 180ms}
+.exhibit-link span{display:inline-block;transition:transform 220ms cubic-bezier(.22,1,.36,1)}
+.exhibit-link:hover{opacity:.65}
+.exhibit-link:hover span{transform:translate(2px,-2px)}
+.exhibit-link:active{opacity:.55}
+.webi-theatre{min-width:0;text-align:center}
+.webi-scene{position:relative;isolation:isolate;display:grid;place-items:center;height:230px;overflow:hidden}
+.webi-character{position:relative;z-index:1;width:320px;height:320px;max-width:none;object-fit:contain;position:absolute;bottom:0;left:50%;margin-left:-160px;filter:drop-shadow(0 16px 12px #1c181010);animation:exhibit-arrive 450ms cubic-bezier(.22,1,.36,1) both}
+.webi-ground{position:absolute;width:62%;height:10%;left:19%;bottom:16%;background:radial-gradient(ellipse,#2820191a,transparent 70%);filter:blur(7px)}
+.exhibit-selector{display:inline-flex;align-items:center;gap:3px;padding:4px;border-radius:40px;background:color-mix(in srgb,var(--bg) 24%,transparent)}
+.exhibit-selector button{position:relative;padding:11px 21px;border-radius:30px;font-size:13px;line-height:20px;cursor:pointer;color:var(--muted);transition:background-color 200ms,color 200ms,box-shadow 200ms,transform 200ms}
+.exhibit-selector button:hover{color:var(--ink);background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.exhibit-selector button[aria-pressed=true]{color:var(--ink);background:color-mix(in srgb,var(--bg) 84%,white);box-shadow:0 1px 6px #1814100d,inset 0 1px 0 #fff7}
+.exhibit-selector button:active{transform:scale(.95)}
+.creditia-exhibit{padding-top:8px;display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:24px;align-items:center}
+.creditia-artwork{margin:0}
+.creditia-art-stage{display:grid;place-items:center;isolation:isolate;min-width:0;height:clamp(260px,41dvh,460px);overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 55% 30%,#d3ccbf77,transparent 67%),color-mix(in srgb,var(--bg) 45%,transparent)}
+.creditia-piece{width:100%;height:100%;min-height:0;max-height:100%;object-fit:contain;padding:14px;filter:drop-shadow(0 12px 15px #18120d26);animation:exhibit-arrive 430ms cubic-bezier(.22,1,.36,1) both}
+.creditia-piece-mosaic{padding:14px 4%}
+.creditia-artwork figcaption{font-size:11px;line-height:1.5;color:var(--muted);text-align:right;margin-top:10px;letter-spacing:.02em}
+.creditia-piece-selector{display:flex;flex-direction:column;justify-content:center;gap:7px;margin:0}
+.creditia-piece-selector button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:5px 0 8px;min-width:74px;color:var(--muted);font-size:12px;cursor:pointer;transition:color 200ms,transform 200ms}
+.creditia-thumbnail{display:grid;place-items:center;width:70px;height:48px;padding:5px;overflow:hidden;border:1px solid transparent;border-radius:8px;transition:background-color 220ms,border-color 220ms,box-shadow 220ms,transform 220ms}
+.creditia-thumbnail img{width:100%;height:100%;min-height:0;max-height:100%;object-fit:contain;filter:drop-shadow(0 3px 3px #17120e17)}
+.creditia-piece-selector button:hover{color:var(--ink)}
+.creditia-piece-selector button:hover .creditia-thumbnail{background:color-mix(in srgb,var(--ink) 4%,transparent);transform:translateY(-3px)}
+.creditia-piece-selector button[aria-pressed=true]{color:var(--ink)}
+.creditia-piece-selector button[aria-pressed=true] .creditia-thumbnail{background:color-mix(in srgb,var(--bg) 66%,transparent);box-shadow:0 3px 9px #1814100a}
+.creditia-piece-selector button:active{transform:scale(.96)}
+:root[data-theme=dark] .webi-ground{background:radial-gradient(ellipse,#0007,transparent 70%)}
+:root[data-theme=dark] .webi-character{filter:drop-shadow(0 13px 10px #0004)}
+:root[data-theme=dark] .exhibit-selector button[aria-pressed=true]{background:#3d424a99;box-shadow:0 2px 6px #0002,inset 0 1px 0 #ffffff13}
+:root[data-theme=dark] .creditia-art-stage{background:radial-gradient(ellipse at 55% 30%,#424b6444,transparent 67%),#0a0c121f}
+:root[data-theme=dark] .creditia-piece{filter:drop-shadow(0 14px 18px #0006)}
+@keyframes exhibit-arrive{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:620px){.webi-exhibit{grid-template-columns:1fr;gap:28px;padding-top:0}.webi-exhibit-copy{max-width:100%}.webi-exhibit-copy h3{font-size:29px;margin-bottom:16px}.webi-exhibit-copy p{font-size:14px}.webi-exhibit-copy p:first-of-type{font-size:17px}.webi-theatre{grid-row:1}.webi-scene{height:225px}.webi-character{width:300px;height:300px;margin-left:-150px}.exhibit-selector button{padding:9px 21px}.creditia-exhibit{grid-template-columns:1fr;gap:6px}.creditia-art-stage{height:310px}.creditia-piece{max-height:100%;padding:12px}.creditia-piece-mosaic{padding:16px 4%}.creditia-artwork figcaption{font-size:10px}.creditia-piece-selector{flex-direction:row;gap:8px;margin-top:12px}.creditia-piece-selector button{font-size:11px;min-width:60px}.creditia-thumbnail{width:64px;height:52px}}
+@media(prefers-reduced-motion:reduce){.webi-character,.creditia-piece{animation:none}.exhibit-link span,.exhibit-selector button,.creditia-piece-selector button,.creditia-thumbnail{transition:none}.creditia-piece-selector button:hover .creditia-thumbnail{transform:none}}
+.creditia-exhibit[data-motion=false] .creditia-piece{animation:none}

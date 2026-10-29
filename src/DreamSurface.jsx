@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { startCanvasSurface } from './canvas-surface.js';
 import { startSurfaceMotion } from './surface-motion.js';
+import { loadWovenMarks, drawWovenMarks } from './woven-marks.js';
 const vertex='attribute vec3 position;attribute vec2 uv;varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,1.0);}';
 const fragment=`
 precision highp float;
@@ -35,8 +36,9 @@ void main(){
 export default function DreamSurface({theme,motion}){
  const hostRef=useRef(null), runtime=useRef(null), preferences=useRef({theme,motion}); preferences.current={theme,motion};
  useEffect(()=>{
-  const host=hostRef.current, parent=host.closest('.hero');
-  let disposed=false,gl=null,program=null,buffers=[],textures=[],shaders=[],ro,glCanvas;
+  const host=hostRef.current, parent=host.closest('.flag-field')||host.closest('.hero');
+  let disposed=false,gl=null,program=null,buffers=[],textures=[],shaders=[],ro,glCanvas,marksReady=false;
+  const contextLost=()=>{delete host.dataset.marks;host.classList.remove('ready');runtime.current?.dispose();};
   const free=()=>{if(!gl)return;textures.forEach(t=>gl.deleteTexture(t));buffers.forEach(b=>gl.deleteBuffer(b));shaders.forEach(s=>gl.deleteShader(s));if(program)gl.deleteProgram(program);textures=[];buffers=[];shaders=[];program=null;gl=null;};
   async function start(){try{
    glCanvas=document.createElement('canvas');
@@ -59,7 +61,7 @@ export default function DreamSurface({theme,motion}){
    gl.enableVertexAttribArray(aUv);gl.vertexAttribPointer(aUv,2,gl.FLOAT,false,20,12);
    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
    const loadImage=src=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error(src));img.src=src;});
-   const images=await Promise.all(['/assets/dream-light.webp','/assets/dream-dark.webp'].map(loadImage));
+   const [images,marks]=await Promise.all([Promise.all(['/assets/dream-light.webp','/assets/dream-dark.webp'].map(loadImage)),loadWovenMarks(parent)]);
    if(disposed)return;
    images.forEach((img,i)=>{
     const texture=gl.createTexture();textures.push(texture);
@@ -72,17 +74,32 @@ export default function DreamSurface({theme,motion}){
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
     gl.uniform1i(uniform[i?'uDark':'uLight'],i);
    });
-   glCanvas.setAttribute('aria-hidden','true');host.appendChild(glCanvas);
-   const resize=()=>{const r=host.getBoundingClientRect(),pr=Math.min(devicePixelRatio,1.65);glCanvas.width=Math.max(1,Math.floor(r.width*pr));glCanvas.height=Math.max(1,Math.floor(r.height*pr));gl.viewport(0,0,glCanvas.width,glCanvas.height);gl.uniform2f(uniform.uResolution,r.width,r.height);runtime.current?.refresh();};
+   glCanvas.setAttribute('aria-hidden','true');glCanvas.addEventListener('webglcontextlost',contextLost);host.appendChild(glCanvas);
+   const material=document.createElement('canvas'),context=material.getContext('2d');
+   const resize=()=>{
+    const r=host.getBoundingClientRect(),pr=Math.min(devicePixelRatio,1.65),a=r.width/r.height;
+    glCanvas.width=Math.max(1,Math.floor(r.width*pr));glCanvas.height=Math.max(1,Math.floor(r.height*pr));
+    gl.viewport(0,0,glCanvas.width,glCanvas.height);gl.uniform2f(uniform.uResolution,r.width,r.height);
+    marksReady=!!(marks&&context);delete host.dataset.marks;
+    if(context){images.forEach((img,i)=>{
+     material.width=img.naturalWidth;material.height=img.naturalHeight;context.drawImage(img,0,0);
+     const width=material.width*Math.min(a/1.5,1),height=material.height*Math.min(1.5/a,1);
+     try{marksReady=drawWovenMarks(context,marks,host,{x:(material.width-width)/2,y:(material.height-height)/2,width,height,dark:!!i})&&marksReady;}catch{marksReady=false;}
+     gl.activeTexture(i?gl.TEXTURE1:gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,textures[i]);
+     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,material);
+    });}
+    runtime.current?.refresh();
+   };
    ro=new ResizeObserver(resize);ro.observe(host);resize();
    runtime.current=startSurfaceMotion(host,parent,preferences,s=>{
     gl.uniform1f(uniform.uTime,s.time);gl.uniform1f(uniform.uTheme,s.mix);gl.uniform1f(uniform.uMotion,s.moving);gl.uniform1f(uniform.uRippleTime,s.rippleAge);gl.uniform1f(uniform.uInteraction,s.interaction);
     gl.uniform2f(uniform.uPointer,s.x,1-s.y);gl.uniform2f(uniform.uRipple,s.rippleX,1-s.rippleY);
     gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    if(marksReady&&!gl.isContextLost())host.dataset.marks='woven';
    });
-  }catch(error){ro?.disconnect();runtime.current?.dispose();glCanvas?.remove();free();if(!disposed)runtime.current=startCanvasSurface(host,preferences,parent);}}
+  }catch(error){delete host.dataset.marks;ro?.disconnect();runtime.current?.dispose();glCanvas?.remove();free();if(!disposed)runtime.current=startCanvasSurface(host,preferences,parent);}}
   start();
-  return()=>{disposed=true;runtime.current?.dispose();runtime.current=null;ro?.disconnect();const context=gl;free();context?.getExtension('WEBGL_lose_context')?.loseContext();host.replaceChildren();};
+  return()=>{disposed=true;delete host.dataset.marks;runtime.current?.dispose();runtime.current=null;ro?.disconnect();glCanvas?.removeEventListener('webglcontextlost',contextLost);const context=gl;free();context?.getExtension('WEBGL_lose_context')?.loseContext();host.replaceChildren();};
  },[]);
  useEffect(()=>{runtime.current?.refresh();},[theme,motion]);
  return <div ref={hostRef} className="dream-canvas"/>;
