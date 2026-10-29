@@ -23,4 +23,4 @@ main{flex:1;display:grid;align-content:center}.hero{position:relative;isolation:
 .flag-field:has(.dream-canvas.ready[data-marks="woven"]) .flag-project-symbol>img{opacity:0}
 body.sheet-open .hero-copy{opacity:.45}
 
-.project-sheet:focus-visible{outline:none}
+.story-title h2:focus{outline:none}

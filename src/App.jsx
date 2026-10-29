@@ -93,7 +93,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
       if (!origin.current) origin.current = document.querySelector(`[data-project="${selected}"]`);
       if (!dialog.open) {
         dialog.showModal();
-        dialog.focus({ preventScroll: true });
+        dialog.querySelector('#project-title').focus({ preventScroll: true });
         const rect = origin.current?.getBoundingClientRect();
         const box = dialog.getBoundingClientRect();
         const dx = rect ? rect.left + rect.width / 2 - (box.left + box.width / 2) : 0;
@@ -132,7 +132,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
   }, []);
 
   const backdropPointer = useRef(false);
-  return <dialog ref={dialogRef} className="project-sheet" tabIndex={-1} aria-labelledby="project-title"
+  return <dialog ref={dialogRef} className="project-sheet" aria-labelledby="project-title"
     onCancel={event => { event.preventDefault(); onClose(); }}
     onPointerDown={event => { backdropPointer.current = event.target === event.currentTarget; }}
     onClick={event => { if (event.target === event.currentTarget && backdropPointer.current) onClose(); }}>
@@ -148,7 +148,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
         <div className="sheet-body" ref={bodyRef}>
           <article className="project-story" key={project.id}>
             <div className="story-opening">
-              <div className="story-title"><span className="project-kicker">{project.name}</span><h2 id="project-title">{project.title}</h2></div>
+              <div className="story-title"><span className="project-kicker">{project.name}</span><h2 id="project-title" tabIndex={-1}>{project.title}</h2></div>
               <div className="story-prose"><p>{project.story}</p><p>{project.philosophy}</p></div>
             </div>
             {project.id === 'weibei' ? <WebiExhibit motion={motion}/> : <CreditiaExhibit motion={motion}/>}
