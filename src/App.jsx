@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState, lazy, Suspense } from 'react';
-import { ArrowUpRight, Sun, Moon, X, ArrowUp } from '@phosphor-icons/react';
+import { ArrowUpRight, Sun, Moon, X, ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import { WebiExhibit, CreditiaExhibit } from './ProjectExhibits.jsx';
 import stats from './project-stats.json';
+import { BrandStory } from './BrandStory.jsx';
+import { useFlagUnfold } from './useFlagUnfold.js';
 
 const DreamSurface = lazy(() => import('./DreamSurface.jsx'));
 const asset = name => `/assets/${name}`;
@@ -73,7 +75,7 @@ function ProjectFacts({ project }) {
   </div>;
 }
 
-function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
+function ProjectSheet({ selected, motion, origin, returnContext, onSelect, onClose }) {
   const dialogRef = useRef(null);
   const bodyRef = useRef(null);
   const animationRef = useRef(null);
@@ -90,7 +92,7 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
       closingRef.current = false;
       animationRef.current?.cancel();
       document.body.classList.add('sheet-open');
-      if (!origin.current) origin.current = document.querySelector(`[data-project="${selected}"]`);
+      if (!origin.current) origin.current = document.querySelector(`[data-project-entry="${returnContext.current.trigger || `flag-${selected}`}"]`);
       if (!dialog.open) {
         dialog.showModal();
         dialog.querySelector('#project-title').focus({ preventScroll: true });
@@ -116,11 +118,15 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
         if (!closingRef.current) return;
         dialog.close();
         document.body.classList.remove('sheet-open');
-        origin.current?.focus({ preventScroll: true });
+        const currentUrl = location.pathname + location.search + location.hash;
+        if (currentUrl === returnContext.current.url) {
+          window.scrollTo({ top: returnContext.current.scrollY, behavior: 'instant' });
+          origin.current?.focus({ preventScroll: true });
+        }
         setDisplayed(null);
       }).catch(() => {});
     }
-  }, [selected, origin]);
+  }, [selected, origin, returnContext]);
 
   useEffect(() => {
     if (!motion && animationRef.current?.playState === 'running') animationRef.current.finish();
@@ -168,11 +174,20 @@ function ProjectSheet({ selected, motion, origin, onSelect, onClose }) {
 export function App() {
   const { theme, setPreference } = useAppearance();
   const motion = useMotion();
+  const sceneRef = useRef(null);
+  useFlagUnfold(sceneRef, motion);
   const [selected, setSelected] = useState(projectFromHash);
   const origin = useRef(null);
-  const returnUrl = useRef(location.pathname + location.search);
+  const returnContext = useRef(history.state?.wroughtmindReturn || { url: location.pathname + location.search, scrollY: 0, trigger: null });
   useEffect(() => {
-    const sync = () => setSelected(projectFromHash());
+    const sync = () => {
+      const id = projectFromHash();
+      if (id && history.state?.wroughtmindReturn) {
+        returnContext.current = history.state.wroughtmindReturn;
+        origin.current = document.querySelector(`[data-project-entry="${returnContext.current.trigger}"]`);
+      }
+      setSelected(id);
+    };
     window.addEventListener('popstate', sync);
     window.addEventListener('hashchange', sync);
     return () => { window.removeEventListener('popstate', sync); window.removeEventListener('hashchange', sync); };
@@ -181,8 +196,8 @@ export function App() {
     if (id === selected) return;
     if (!selected) {
       origin.current = event?.currentTarget || document.querySelector(`[data-project="${id}"]`);
-      returnUrl.current = location.pathname + location.search + location.hash;
-      history.pushState({ wroughtmindSheet: true }, '', `#${id}`);
+      returnContext.current = { url: location.pathname + location.search + location.hash, scrollY: window.scrollY, trigger: origin.current?.dataset.projectEntry };
+      history.pushState({ wroughtmindSheet: true, wroughtmindReturn: returnContext.current }, '', `#${id}`);
     } else {
       history.replaceState(history.state, '', `#${id}`);
     }
@@ -190,9 +205,8 @@ export function App() {
   }
   function closeProject() {
     if (!selected) return;
-    setSelected(null);
     if (history.state?.wroughtmindSheet) history.back();
-    else { history.replaceState(null, '', returnUrl.current); setSelected(null); }
+    else { history.replaceState(null, '', returnContext.current.url); setSelected(null); }
   }
   return <>
     <a className="skip-link" href="#work">Skip to projects</a>
@@ -206,7 +220,7 @@ export function App() {
         </clipPath>
       </defs>
     </svg>
-    <div className="site-scene">
+    <div className="site-scene" ref={sceneRef} data-motion={motion}>
       <header className="site-header">
         <a className="brand-lockup" href="#top" aria-label="WroughtMind home"><img className="brand-mark" src={asset('wroughtmind-mark.svg')} alt=""/><span className="wordmark">wroughtmind</span></a>
         <nav aria-label="Main navigation"><a className="github-link" href="https://github.com/WroughtMind" target="_blank" rel="noreferrer">GitHub <ArrowUpRight size={15}/></a>
@@ -216,6 +230,7 @@ export function App() {
         </nav>
       </header>
       <main id="top">
+        <div className="flag-stage">
         <section className="hero" aria-label="WroughtMind flag">
           <div className="flag-field">
             <div className="hero-backdrop" aria-hidden="true">
@@ -226,16 +241,19 @@ export function App() {
             <div className="fabric-light" aria-hidden="true"/>
             <div className="hero-copy"><h1><span className="hero-prefix">experience a</span><span className="hero-dream">dream</span></h1></div>
             <div className="flag-projects" id="work" role="group" aria-label="Our projects">
-              {projects.map(p => <button key={p.id} data-project={p.id} className={`flag-project flag-project-${p.id}`} aria-haspopup="dialog" aria-label={`Explore ${p.name}`} onClick={event => selectProject(p.id, event)}>
+              {projects.map(p => <button key={p.id} data-project={p.id} data-project-entry={`flag-${p.id}`} className={`flag-project flag-project-${p.id}`} aria-haspopup="dialog" aria-label={`Explore ${p.name}`} onClick={event => selectProject(p.id, event)}>
                 <span className="flag-project-symbol"><ProjectMark project={p} woven/></span>
                 <span className="flag-project-name">{p.name}<ArrowUpRight size={14}/></span>
               </button>)}
             </div>
           </div>
+          <a className="scroll-cue icon-button" href="#approach" aria-label="Our approach"><ArrowDown size={19} weight="light"/></a>
         </section>
+        </div>
+        <BrandStory onSelect={selectProject}/>
+        <footer className="site-footer"><span>© {new Date().getFullYear()} WroughtMind</span><a className="back-top icon-button" href="#top" aria-label="Back to top"><ArrowUp size={18}/></a></footer>
       </main>
-      <footer className="site-footer"><span>© {new Date().getFullYear()} WroughtMind</span><a className="back-top icon-button" href="#top" aria-label="Back to top"><ArrowUp size={18}/></a></footer>
     </div>
-    <ProjectSheet selected={selected} motion={motion} origin={origin} onSelect={selectProject} onClose={closeProject}/>
+    <ProjectSheet selected={selected} motion={motion} origin={origin} returnContext={returnContext} onSelect={selectProject} onClose={closeProject}/>
   </>;
 }
