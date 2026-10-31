@@ -243,7 +243,6 @@ export function App() {
             <div className="flag-projects" id="work" role="group" aria-label="Our projects">
               {projects.map(p => <button key={p.id} data-project={p.id} data-project-entry={`flag-${p.id}`} className={`flag-project flag-project-${p.id}`} aria-haspopup="dialog" aria-label={`Explore ${p.name}`} onClick={event => selectProject(p.id, event)}>
                 <span className="flag-project-symbol"><ProjectMark project={p} woven/></span>
-                <span className="flag-project-name">{p.name}<ArrowUpRight size={14}/></span>
               </button>)}
             </div>
           </div>
